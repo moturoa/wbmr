@@ -11,7 +11,7 @@ set_gemeente_menu <- function(){
 
       shiny::uiOutput("ui_current_klant"),
 
-      shiny::radioButtons("sel_klant",  "Maak een keuze", choices = ""),
+      shiny::selectInput("sel_klant",  "Maak een keuze", choices = NULL),
 
       tags$p("Pas op: huidige this_version.yml wordt overschreven (zonder comments)"),
       shiny::actionButton("btn_set_klant", "Klant instellen",
@@ -34,7 +34,7 @@ set_gemeente_menu <- function(){
 
     observe({
       print(get_gemeente_choices())
-      updateRadioButtons(session, "sel_klant",
+      updateSelectInput(session, "sel_klant",
                          choices = sort(get_gemeente_choices()),
                          selected = get_gemeente())
     })
