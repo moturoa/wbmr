@@ -7,7 +7,7 @@ deploy_project <- function(gemeente = NULL){
   # If 'gemeente' specified, ignore this_version,
   # and set this_version correctly in the deploy project
   if(is.null(gemeente)){
-    gemeente <- yaml::read_yaml("this_version.yml")$gemeente
+    gemeente <- get_gemeente()
     if(is.null(gemeente)){
       stop("Specify 'gemeente' in this_version.yml")
     }

@@ -13,9 +13,7 @@ normalize_gemeente_name <- function(gemeente){
 #' @export
 #' @rdname utils
 make_app_name <- function(gemeente){
-
   paste0(normalize_gemeente_name(gemeente), "_wbm")
-
 }
 
 #' Set current gemeente in this_version.yml
@@ -25,4 +23,19 @@ make_app_name <- function(gemeente){
 set_gemeente <- function(gemeente){
   yaml::write_yaml(list(gemeente = gemeente), "this_version.yml")
 }
+
+#' Get current gemeente from this_versin.yml
+#' @export
+#' @rdname utils
+get_gemeente <- function(){
+  yaml::read_yaml("this_version.yml")$gemeente
+}
+
+#' Get available gemeentes for the WBM
+#' @export
+get_gemeente_choices <- function(path = getwd()){
+  fns <- list.dirs(file.path(path, "config_site"), recursive = FALSE)
+  sort(basename(fns))
+}
+
 

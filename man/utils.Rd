@@ -4,6 +4,7 @@
 \alias{normalize_gemeente_name}
 \alias{make_app_name}
 \alias{set_gemeente}
+\alias{get_gemeente}
 \title{Make code friendly version of gemeente name}
 \usage{
 normalize_gemeente_name(gemeente)
@@ -11,6 +12,8 @@ normalize_gemeente_name(gemeente)
 make_app_name(gemeente)
 
 set_gemeente(gemeente)
+
+get_gemeente()
 }
 \description{
 Overwrites current this_version.yml!
