@@ -13,7 +13,7 @@ set_gemeente_menu <- function(){
 
       shiny::selectInput("sel_klant",  "Maak een keuze", choices = NULL),
 
-      tags$p("Pas op: huidige this_version.yml wordt overschreven (zonder comments)"),
+      shiny::tags$p("Pas op: huidige this_version.yml wordt overschreven (zonder comments)"),
       shiny::actionButton("btn_set_klant", "Klant instellen",
                           icon = shiny::icon("check"),
                           class = "btn-success btn-lg")
@@ -28,12 +28,11 @@ set_gemeente_menu <- function(){
     })
 
     output$ui_current_klant <- renderUI({
-      tags$p(HTML(glue::glue("De huidige gemeente is <b>{get_gemeente()}</b>")),
+      shiny::tags$p(HTML(glue::glue("De huidige gemeente is <b>{get_gemeente()}</b>")),
              style = "font-size: 1.1em;")
     })
 
     observe({
-      print(get_gemeente_choices())
       updateSelectInput(session, "sel_klant",
                          choices = sort(get_gemeente_choices()),
                          selected = get_gemeente())
