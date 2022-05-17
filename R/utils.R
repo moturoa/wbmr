@@ -16,6 +16,16 @@ make_app_name <- function(gemeente){
   paste0(normalize_gemeente_name(gemeente), "_wbm")
 }
 
+#' Find database name for the current client
+#' @export
+#' @rdname utils
+get_current_db_name <- function(){
+  client <- get_gemeente()
+  
+  stopifnot(file.exists("conf/config.yml"))
+  config::get(client, file = "conf/config.yml")$dbname
+}
+
 #' Set current gemeente in this_version.yml
 #' @description Overwrites current this_version.yml!
 #' @export
@@ -24,7 +34,7 @@ set_gemeente <- function(gemeente){
   yaml::write_yaml(list(gemeente = gemeente), "this_version.yml")
 }
 
-#' Get current gemeente from this_versin.yml
+#' Get current gemeente from this_version.yml
 #' @export
 #' @rdname utils
 get_gemeente <- function(){
