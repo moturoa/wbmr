@@ -32,7 +32,7 @@ deploy_project <- function(gemeente = NULL, test = FALSE){
             file.path("config_site",gemeente))
 
   extra <- c("config_site/help.yml", "data_public/osm_icon_key.csv")
-  if(!file.exists(extra))extra <- NULL
+  if(!all(file.exists(extra)))extra <- NULL
   
   shintoshiny::make_deploy_project(appname, directories = dirs,
                                    extra_files = extra)
