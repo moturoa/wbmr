@@ -5,7 +5,7 @@
 \alias{deploy_test_project}
 \title{Make a 'deploy project' for the WBM}
 \usage{
-deploy_project(gemeente = NULL, test = FALSE)
+deploy_project(tenant = NULL, test = FALSE)
 
 deploy_test_project(...)
 }

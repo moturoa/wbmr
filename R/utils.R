@@ -1,49 +1,50 @@
-#' Make code friendly version of gemeente name
+#' Make code friendly version of tenant name
 #' @export
 #' @rdname utils
-normalize_gemeente_name <- function(gemeente){
-  o <- tolower(gemeente)
+normalize_tenant_name <- function(tenant){
+  label <- label_tenant(tenant)
+  o <- tolower(label)
   o <- gsub("-","_",o)
   o <- gsub(" ","_",o)
   o
 }
 
-#' Make WBM appn ame based on gemeente name
+#' Make WBM appn ame based on tenant name
 #' @description Corresponds to the application name on rsconnect
 #' @export
 #' @rdname utils
-make_app_name <- function(gemeente){
-  paste0(normalize_gemeente_name(gemeente), "_wbm")
+make_app_name <- function(tenant){
+  paste0(normalize_tenant_name(tenant), "_wbm")
 }
 
 #' Find database name for the current client
 #' @export
 #' @rdname utils
 get_current_db_name <- function(){
-  client <- get_gemeente()
+  client <- get_tenant()
   
   stopifnot(file.exists("conf/config.yml"))
   config::get(client, file = "conf/config.yml")$dbname
 }
 
-#' Set current gemeente in this_version.yml
+#' Set current tenant in this_version.yml
 #' @description Overwrites current this_version.yml!
 #' @export
 #' @rdname utils
-set_gemeente <- function(gemeente){
-  yaml::write_yaml(list(gemeente = gemeente), "this_version.yml")
+set_tenant <- function(tenant){
+  yaml::write_yaml(list(tenant = tenant), "this_version.yml")
 }
 
-#' Get current gemeente from this_version.yml
+#' Get current tenant from this_version.yml
 #' @export
 #' @rdname utils
-get_gemeente <- function(){
-  yaml::read_yaml("this_version.yml")$gemeente
+get_tenant <- function(){
+  yaml::read_yaml("this_version.yml")$tenant
 }
 
-#' Get available gemeentes for the WBM
+#' Get available tenants for the WBM
 #' @export
-get_gemeente_choices <- function(path = getwd()){
+get_tenant_choices <- function(path = getwd()){
   fns <- list.dirs(file.path(path, "config_site"), recursive = FALSE)
   sort(basename(fns))
 }

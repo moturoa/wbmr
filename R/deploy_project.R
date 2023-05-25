@@ -3,14 +3,14 @@
 #' @importFrom yaml read_yaml write_yaml
 #' @importFrom shintoshiny make_deploy_project
 #' @rdname deploy
-deploy_project <- function(gemeente = NULL, test = FALSE){
+deploy_project <- function(tenant = NULL, test = FALSE){
 
-  # If 'gemeente' specified, ignore this_version,
+  # If 'tenant' specified, ignore this_version,
   # and set this_version correctly in the deploy project
-  if(is.null(gemeente)){
-    gemeente <- get_gemeente()
-    if(is.null(gemeente)){
-      stop("Specify 'gemeente' in this_version.yml")
+  if(is.null(tenant)){
+    tenant <- get_tenant()
+    if(is.null(tenant)){
+      stop("Specify 'tenant' in this_version.yml")
     }
   } else {
     file.copy("this_version.yml", "backup_this_version.yml")
@@ -18,18 +18,18 @@ deploy_project <- function(gemeente = NULL, test = FALSE){
       file.copy("backup_this_version.yml", "this_version.yml", overwrite = TRUE)
       file.remove("backup_this_version.yml")
     })
-    set_gemeente(gemeente)
+    set_tenant(tenant)
   }
 
-  appname <- make_app_name(gemeente)
+  appname <- make_app_name(tenant)
   
   if(test)appname <- paste0(appname, "_test")
 
   dirs <- c("conf","modules","R","www","preload",
             "data_public/NL",
-            file.path("data_public",gemeente),
-            file.path("data",gemeente),
-            file.path("config_site",gemeente))
+            file.path("data_public",tenant),
+            file.path("data",tenant),
+            file.path("config_site",tenant))
 
   extra <- c("config_site/help.yml", "data_public/osm_icon_key.csv")
   if(!all(file.exists(extra)))extra <- NULL

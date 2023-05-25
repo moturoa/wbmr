@@ -2,10 +2,10 @@
 % Please edit documentation in R/open_config_site.R
 \name{open_config_site}
 \alias{open_config_site}
-\title{Open config_site for current gemeente}
+\title{Open config_site for current tenant}
 \usage{
 open_config_site()
 }
 \description{
-Open config_site for current gemeente
+Open config_site for current tenant
 }

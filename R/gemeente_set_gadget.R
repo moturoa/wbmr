@@ -1,10 +1,10 @@
 
-#' UI to set WBM gemeente
+#' UI to set WBM tenant
 #' @export
-set_gemeente_menu <- function(){
+set_tenant_menu <- function(){
 
   ui <- miniUI::miniPage(
-    miniUI::gadgetTitleBar("Stel de huidige gemeente in",
+    miniUI::gadgetTitleBar("Juno : switch de tenant",
                            left = miniUI::miniTitleBarCancelButton(label = "Annuleren", primary = TRUE),
                            right = NULL),
     miniUI::miniContentPanel(
@@ -14,7 +14,7 @@ set_gemeente_menu <- function(){
       shiny::selectInput("sel_klant",  "Maak een keuze", choices = NULL),
 
       shiny::tags$p("Pas op: huidige this_version.yml wordt overschreven (zonder comments)"),
-      shiny::actionButton("btn_set_klant", "Klant instellen",
+      shiny::actionButton("btn_set_klant", "Tenant instellen",
                           icon = shiny::icon("check"),
                           class = "btn-success btn-lg")
 
@@ -28,27 +28,27 @@ set_gemeente_menu <- function(){
     })
 
     output$ui_current_klant <- renderUI({
-      shiny::tags$p(HTML(glue::glue("De huidige gemeente is <b>{get_gemeente()}</b>")),
+      shiny::tags$p(HTML(glue::glue("De huidige tenant is <b>{get_tenant()}</b>")),
              style = "font-size: 1.1em;")
     })
 
     observe({
       updateSelectInput(session, "sel_klant",
-                         choices = sort(get_gemeente_choices()),
-                         selected = get_gemeente())
+                         choices = sort(get_tenant_choices()),
+                         selected = get_tenant())
     })
 
 
     observeEvent(input$btn_set_klant, {
 
-      set_gemeente(input$sel_klant)
-      shiny::stopApp(glue::glue("Nieuwe gemeente is {input$sel_klant}"))
+      set_tenant(input$sel_klant)
+      shiny::stopApp(glue::glue("Nieuwe tenant is {input$sel_klant}"))
     })
 
   }
 
   shiny::runGadget(ui, server,
-                   viewer = shiny::dialogViewer(dialogName = "WBM - gemeente kiezen"),
+                   viewer = shiny::dialogViewer(dialogName = "WBM - tenant kiezen"),
                    stopOnCancel = FALSE)
 
 }
