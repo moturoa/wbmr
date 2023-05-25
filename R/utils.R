@@ -9,7 +9,7 @@ normalize_gemeente_name <- function(gemeente){
 }
 
 #' Make WBM appn ame based on gemeente name
-#' @decription Corresponds to the application name on rsconnect
+#' @description Corresponds to the application name on rsconnect
 #' @export
 #' @rdname utils
 make_app_name <- function(gemeente){

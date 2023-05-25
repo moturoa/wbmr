@@ -2,9 +2,12 @@
 % Please edit documentation in R/deploy_project.R
 \name{deploy_project}
 \alias{deploy_project}
+\alias{deploy_test_project}
 \title{Make a 'deploy project' for the WBM}
 \usage{
-deploy_project(gemeente = NULL)
+deploy_project(gemeente = NULL, test = FALSE)
+
+deploy_test_project(...)
 }
 \description{
 Make a 'deploy project' for the WBM

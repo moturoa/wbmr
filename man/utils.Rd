@@ -3,6 +3,7 @@
 \name{normalize_gemeente_name}
 \alias{normalize_gemeente_name}
 \alias{make_app_name}
+\alias{get_current_db_name}
 \alias{set_gemeente}
 \alias{get_gemeente}
 \title{Make code friendly version of gemeente name}
@@ -11,10 +12,14 @@ normalize_gemeente_name(gemeente)
 
 make_app_name(gemeente)
 
+get_current_db_name()
+
 set_gemeente(gemeente)
 
 get_gemeente()
 }
 \description{
+Corresponds to the application name on rsconnect
+
 Overwrites current this_version.yml!
 }
