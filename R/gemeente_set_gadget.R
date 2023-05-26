@@ -33,8 +33,10 @@ set_tenant_menu <- function(){
     })
 
     observe({
+      chc <- get_tenant_choices()
+      
       updateSelectInput(session, "sel_klant",
-                         choices = sort(get_tenant_choices()),
+                         choices = sort(setNames(chc, paste0(chc, " (", label_tenant(chc), ")"))),
                          selected = get_tenant())
     })
 
