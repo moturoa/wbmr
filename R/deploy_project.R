@@ -41,6 +41,7 @@ deploy_project <- function(tenant = NULL, test = FALSE){
 
 
 #' @rdname deploy
+#' @export
 deploy_test_project <- function(...){
   deploy_project(..., test = TRUE)
 }
