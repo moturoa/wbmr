@@ -32,8 +32,20 @@ get_current_db_name <- function(){
 #' @export
 #' @rdname utils
 set_tenant <- function(tenant){
+  message(paste("Juno - new tenant:", tenant))
   yaml::write_yaml(list(tenant = tenant), "this_version.yml")
 }
+
+#' Set random tenant in this_version.yml
+#' @description Travel somewhere!
+#' @export
+#' @rdname utils
+set_random_tenant <- function(){
+  tenant <- sample(get_tenant_choices(),1)
+  set_tenant(tenant)
+}
+
+
 
 #' Get current tenant from this_version.yml
 #' @export

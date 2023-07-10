@@ -5,6 +5,7 @@
 \alias{make_app_name}
 \alias{get_current_db_name}
 \alias{set_tenant}
+\alias{set_random_tenant}
 \alias{get_tenant}
 \title{Make code friendly version of tenant name}
 \usage{
@@ -16,10 +17,14 @@ get_current_db_name()
 
 set_tenant(tenant)
 
+set_random_tenant()
+
 get_tenant()
 }
 \description{
 Corresponds to the application name on rsconnect
 
 Overwrites current this_version.yml!
+
+Travel somewhere!
 }
