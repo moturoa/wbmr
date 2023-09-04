@@ -1,6 +1,10 @@
 
 #' UI to set WBM tenant
 #' @export
+#' @importFrom shiny tags updateSelectInput renderUI observeEvent selectInput uiOutput 
+#' @importFrom shiny actionButton stopApp observe runGadget dialogViewer
+#' @importFrom miniUI gadgetTitleBar miniContentPanel
+#' @importFrom stats setNames
 set_tenant_menu <- function(){
 
   ui <- miniUI::miniPage(
@@ -27,21 +31,21 @@ set_tenant_menu <- function(){
       shiny::stopApp("Geannulleerd.")
     })
 
-    output$ui_current_klant <- renderUI({
-      shiny::tags$p(HTML(glue::glue("De huidige tenant is <b>{get_tenant()}</b>")),
+    output$ui_current_klant <- shiny::renderUI({
+      shiny::tags$p(shiny::HTML(glue::glue("De huidige tenant is <b>{get_tenant()}</b>")),
              style = "font-size: 1.1em;")
     })
 
-    observe({
+    shiny::observe({
       chc <- get_tenant_choices()
       
-      updateSelectInput(session, "sel_klant",
-                         choices = sort(setNames(chc, paste0(chc, " (", label_tenant(chc), ")"))),
+      shiny::updateSelectInput(session, "sel_klant",
+                         choices = sort(stats::setNames(chc, paste0(chc, " (", label_tenant(chc), ")"))),
                          selected = get_tenant())
     })
 
 
-    observeEvent(input$btn_set_klant, {
+    shiny::observeEvent(input$btn_set_klant, {
 
       set_tenant(input$sel_klant)
       shiny::stopApp()

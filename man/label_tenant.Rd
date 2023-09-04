@@ -6,6 +6,9 @@
 \usage{
 label_tenant(tenant)
 }
+\arguments{
+\item{tenant}{Tenant (e.g. 'DEMO')}
+}
 \description{
 Label a tenant based on the code
 }

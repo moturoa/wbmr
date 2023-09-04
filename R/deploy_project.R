@@ -1,4 +1,6 @@
 #' Make a 'deploy project' for the WBM
+#' @param tenant Tenant (e.g. 'DEMO')
+#' @param test If TRUE, adds a "_test" to the app name
 #' @export
 #' @importFrom yaml read_yaml write_yaml
 #' @importFrom shintoshiny make_deploy_project

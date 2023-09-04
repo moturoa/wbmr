@@ -20,6 +20,7 @@ make_app_name <- function(tenant){
 #' Find database name for the current client
 #' @export
 #' @rdname utils
+#' @importFrom config get
 get_current_db_name <- function(){
   client <- get_tenant()
   

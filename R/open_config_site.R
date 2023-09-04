@@ -1,6 +1,7 @@
 #' Open config_site for current tenant
 #' @export
 #' @importFrom rstudioapi navigateToFile
+#' @importFrom glue glue
 open_config_site <- function(){
   
   requireNamespace("rstudioapi")  

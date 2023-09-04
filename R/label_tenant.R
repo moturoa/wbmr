@@ -1,5 +1,6 @@
 
 #' Label a tenant based on the code
+#' @param tenant Tenant (e.g. 'DEMO')
 #' @export
 label_tenant <- function(tenant){
   
