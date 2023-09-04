@@ -30,11 +30,13 @@ get_current_db_name <- function(){
 
 #' Set current tenant in this_version.yml
 #' @description Overwrites current this_version.yml!
+#' @param tenant Tenant (e.g. 'DEMO')
+#' @param 
 #' @export
 #' @rdname utils
-set_tenant <- function(tenant){
+set_tenant <- function(tenant, path = getwd()){
   message(paste("Juno - new tenant:", tenant))
-  yaml::write_yaml(list(tenant = tenant), "this_version.yml")
+  yaml::write_yaml(list(tenant = tenant), file.path(path, "this_version.yml"))
 }
 
 #' Set random tenant in this_version.yml
