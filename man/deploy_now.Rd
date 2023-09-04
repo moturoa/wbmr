@@ -7,19 +7,22 @@
 deploy_now(
   tenant,
   appname,
+  where = c("devapp.shintolabs.net", "app.shintolabs.net"),
   appid = NULL,
   db_config_file = "conf/config.yml",
   log_deployment = TRUE,
   launch_browser = TRUE,
   deploy_location = tempdir(),
   delete_after_deploy = TRUE,
-  where = c("devapp.shintolabs.net", "app.shintolabs.net")
+  ...
 )
 }
 \arguments{
 \item{tenant}{Tenant name (e.g. 'DEMO')}
 
 \item{appname}{Name of app on posit connect (e.g. ')}
+
+\item{where}{The server to deploy to (devapp or app)}
 
 \item{appid}{Optional: the app ID (looks like a uuid in the url at posit connect). Needed if you
 are a collaborator on an app and want to update it (the original uploader does not need the ID)}
@@ -35,7 +38,7 @@ you want to inspect the pre-deploy files.}
 
 \item{delete_after_deploy}{If TRUE, deletes all files after deploying.}
 
-\item{where}{The server to deploy to (devapp or app)}
+\item{...}{Further arguments passed to [rsconnect::deployApp()]}
 }
 \description{
 Does not make a 'deploy project' but deploys Juno for a tenant immediately,

@@ -4,6 +4,7 @@
 #' from a temporary directory
 #' @param tenant Tenant name (e.g. 'DEMO')
 #' @param appname Name of app on posit connect (e.g. ')
+#' @param where The server to deploy to (devapp or app)
 #' @param appid Optional: the app ID (looks like a uuid in the url at posit connect). Needed if you
 #' are a collaborator on an app and want to update it (the original uploader does not need the ID)
 #' @param db_config_file Standard location of the DB config file
@@ -12,7 +13,7 @@
 #' @param deploy_location App will be deployed from a temp directory, or set a directory here if
 #' you want to inspect the pre-deploy files.
 #' @param delete_after_deploy If TRUE, deletes all files after deploying. 
-#' @param where The server to deploy to (devapp or app)
+#' @param ... Further arguments passed to [rsconnect::deployApp()]
 #' @importFrom cli cli_alert_success cli_alert_warning cli_alert_info
 #' @importFrom rsconnect accounts deployApp
 #' @importFrom R.utils copyDirectory
@@ -24,17 +25,21 @@
 #' @export
 deploy_now <- function(tenant,
                        appname,
+                       where = c("devapp.shintolabs.net","app.shintolabs.net"),
                        appid = NULL,
                        db_config_file = "conf/config.yml",
                        log_deployment = TRUE,
                        launch_browser = TRUE,
                        deploy_location = tempdir(),
                        delete_after_deploy = TRUE,
-                       where = c("devapp.shintolabs.net","app.shintolabs.net")
+                       ...
 ){
   
   where <- match.arg(where)
   
+  cli::cli_alert_success(paste("Deploying Juno for tenant",tenant, "to", where,  "(", Sys.time(), ")"))
+  
+  # posit connect account / user
   acc <- rsconnect::accounts()
   
   posit_user <- acc$name[acc$server == where]
@@ -42,6 +47,9 @@ deploy_now <- function(tenant,
     stop(paste("Connect a user to", where, "using the Rstudio Posit Connect button"))
   }
   
+  cli::cli_alert_success("Posit connect user verified")
+  
+  # Files
   directories <- c(
     "conf",
     file.path("config_site", tenant),
@@ -74,6 +82,8 @@ deploy_now <- function(tenant,
   dir.create(file.path(deploy_location, "data_public"), showWarnings = FALSE)
   file.copy("data_public/osm_icon_key.csv", file.path(deploy_location, "data_public/osm_icon_key.csv"))
   
+  cli::cli_alert_success("Copying files to temporary directory done")
+
   # manifest
   manif <- list(
     timestamp = format(Sys.time()),
@@ -82,6 +92,9 @@ deploy_now <- function(tenant,
   )
   yaml::write_yaml(manif, file.path(deploy_location, "shintoconnect_manifest.yml"))
   
+  
+  # set tenant
+  wbmr::set_tenant(tenant, deploy_location)
   
   #if(shintodb::config_is_encrypted(db_config_file)){
   # unencrypted wordt toch geskipt
@@ -105,8 +118,8 @@ deploy_now <- function(tenant,
     account = posit_user,
     server = where,
     launch.browser = launch_browser,
-    lint = TRUE,
-    forceUpdate = TRUE
+    forceUpdate = TRUE,
+    ...
   )
   
   if(isTRUE(resp) && log_deployment){

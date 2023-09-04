@@ -15,11 +15,14 @@ make_app_name(tenant)
 
 get_current_db_name()
 
-set_tenant(tenant)
+set_tenant(tenant, path = getwd())
 
 set_random_tenant()
 
 get_tenant()
+}
+\arguments{
+\item{tenant}{Tenant (e.g. 'DEMO')}
 }
 \description{
 Corresponds to the application name on rsconnect

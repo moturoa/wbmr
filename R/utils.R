@@ -35,7 +35,7 @@ get_current_db_name <- function(){
 #' @export
 #' @rdname utils
 set_tenant <- function(tenant, path = getwd()){
-  message(paste("Juno - new tenant:", tenant))
+  cli::cli_alert_success(paste("Juno - nieuwe tenant:", tenant))
   yaml::write_yaml(list(tenant = tenant), file.path(path, "this_version.yml"))
 }
 
