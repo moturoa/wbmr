@@ -3,10 +3,12 @@
 #' @description Does not make a 'deploy project' but deploys Juno for a tenant immediately,
 #' from a temporary directory
 #' @param tenant Tenant name (e.g. 'DEMO')
-#' @param appname Name of app on posit connect (e.g. ')
+#' @param appname Name of app on posit connect - if NULL (the default), read from tenant_list.yml
 #' @param where The server to deploy to (devapp or app)
 #' @param appid Optional: the app ID (looks like a uuid in the url at posit connect). Needed if you
 #' are a collaborator on an app and want to update it (the original uploader does not need the ID)
+#' @param appid_from_tenant_list If TRUE (the default) and appid is NULL (also default), reads appid from the tenant
+#' list if the deployment is to the production environment
 #' @param db_config_file Standard location of the DB config file
 #' @param log_deployment If TRUE, attempts to log the deployment in DB 
 #' @param launch_browser If TRUE, opens a browser with the app after deployment
@@ -23,21 +25,55 @@
 #' @importFrom shintoshiny log_rsconnect_deployments connect_db_rsconnect_deployments
 #' @importFrom DBI dbDisconnect
 #' @export
+#' @importFrom shintodb has_config_entry
 deploy_now <- function(tenant,
-                       appname,
-                       where = c("devapp.shintolabs.net","app.shintolabs.net"),
+                       appname = NULL,
+                       where = c("devapp.shintolabs.net","app.shintolabs.net","eindhoven.shintolabs.net"),
                        appid = NULL,
+                       appid_from_tenant_list = TRUE,
                        db_config_file = "conf/config.yml",
                        log_deployment = TRUE,
-                       launch_browser = TRUE,
+                       launch_browser = FALSE,
                        deploy_location = tempdir(),
                        delete_after_deploy = TRUE,
                        ...
 ){
   
   where <- match.arg(where)
+ 
+  cli::cli_alert_info(glue::glue("Deploying Juno for tenant {tenant} to {where} ({format(Sys.time())})"))
   
-  cli::cli_alert_success(paste("Deploying Juno for tenant",tenant, "to", where,  "(", Sys.time(), ")"))
+  # !!! could be in a config or whatever ;)
+  is_production <- where %in% c("app.shintolabs.net","eindhoven.shintolabs.net")
+  
+  # check if we have a DB connection
+  where_con <- ifelse(is_production, "production", "development")
+  have_db <- shintodb::has_config_entry(tenant, where_con)
+  if(!have_db){
+    cli::cli_alert_danger(glue::glue("Stop deployment - no database connection found in config for {tenant} in section {where_con}"))
+    return(invisible(NULL))
+  }
+  
+  # read from tenant_list
+  if(is.null(appname)){
+    appname <- appname_tenant(tenant)
+  }
+  
+  # production deployment
+  if(is_production){
+    
+    check_prod <- has_production_tenant(tenant)
+    if(!check_prod){
+      cli::cli_alert_warning(glue::glue("Tenant {tenant} not deployed to production server - set 'production: yes' in tenant_list.yml"))
+      return(invisible(NULL))
+    }
+    
+    if(is.null(appid) & appid_from_tenant_list){
+      appid <- appid_tenant(tenant)
+    }
+  }
+  
+  
   
   # posit connect account / user
   acc <- rsconnect::accounts()
@@ -82,7 +118,7 @@ deploy_now <- function(tenant,
   dir.create(file.path(deploy_location, "data_public"), showWarnings = FALSE)
   file.copy("data_public/osm_icon_key.csv", file.path(deploy_location, "data_public/osm_icon_key.csv"))
   
-  cli::cli_alert_success("Copying files to temporary directory done")
+  cli::cli_alert_success("Copying files to deployment directory - done")
 
   # manifest
   manif <- list(
@@ -141,7 +177,10 @@ deploy_now <- function(tenant,
       shintoshiny::log_rsconnect_deployments(con,
                                              appname = appname,
                                              environment = where,
-                                             userid = posit_user)
+                                             userid = posit_user,
+                                             shintoconnect_manifest = manif,
+                                             version = shintoshiny::get_application_version()
+                                             )
       
     }
     

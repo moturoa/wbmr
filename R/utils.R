@@ -36,6 +36,15 @@ get_current_db_name <- function(){
 #' @rdname utils
 set_tenant <- function(tenant, path = getwd()){
   cli::cli_alert_success(paste("Juno - nieuwe tenant:", tenant))
+  
+  if(!shintodb::has_config_entry(tenant, where = "development")){
+    cli::cli_alert_warning("Tenant does not have a database config entry! Add with shintodb::add_config_entry(...)")
+  }
+  
+  if(!tenant %in% get_tenant_choices()){
+    cli::cli_alert_warning("Tenant does not have an entry in tenant_list.yml - add it there or check your spelling!")
+  }
+  
   yaml::write_yaml(list(tenant = tenant), file.path(path, "this_version.yml"))
 }
 
@@ -60,8 +69,9 @@ get_tenant <- function(){
 #' Get available tenants for the WBM
 #' @export
 get_tenant_choices <- function(path = getwd()){
-  fns <- list.dirs(file.path(path, "config_site"), recursive = FALSE)
-  sort(basename(fns))
+  tl <- yaml::read_yaml("tenant_list.yml")
+  names(tl)
+  
 }
 
 

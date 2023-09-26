@@ -7,7 +7,7 @@
 label_tenant(tenant)
 }
 \arguments{
-\item{tenant}{Tenant (e.g. 'DEMO')}
+\item{tenant}{Tenant (e.g. 'DEMO'), can be vectorized}
 }
 \description{
 Label a tenant based on the code
