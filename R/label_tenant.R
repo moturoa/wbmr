@@ -1,9 +1,5 @@
 
-#' Label a tenant based on the code
-#' @param tenant Tenant (e.g. 'DEMO'), can be vectorized
-#' @export
-label_tenant <- function(tenant){
-  
+value_tenant <- function(tenant, column){
   key <- yaml::read_yaml("tenant_list.yml")
   
   ii <- match(tenant, names(key))
@@ -12,7 +8,15 @@ label_tenant <- function(tenant){
     stop("Add missing tenant to tenant_list.yml before proceeding!")
   }
   
-  unname(sapply(key[ii], "[[", "name", USE.NAMES = FALSE))
+  unname(sapply(key[ii], "[[", column, USE.NAMES = FALSE))
+}
+
+#' Label a tenant based on the code
+#' @param tenant Tenant (e.g. 'DEMO'), can be vectorized
+#' @export
+label_tenant <- function(tenant){
+  
+  value_tenant(tenant, "name")
   
 }
 
@@ -23,8 +27,7 @@ label_tenant <- function(tenant){
 #' @export
 appname_tenant <- function(tenant){
   
-  key <- yaml::read_yaml("tenant_list.yml")
-  key[[tenant]][["appname"]]
+  value_tenant(tenant, "appname")
   
 }
 
@@ -34,8 +37,7 @@ appname_tenant <- function(tenant){
 #' @export
 appid_tenant <- function(tenant){
   
-  key <- yaml::read_yaml("tenant_list.yml")
-  key[[tenant]][["appid"]]
+  value_tenant(tenant, "appid")
   
 }
 
@@ -46,8 +48,7 @@ appid_tenant <- function(tenant){
 #' @export
 has_production_tenant <- function(tenant){
   
-  key <- yaml::read_yaml("tenant_list.yml")
-  key[[tenant]][["production"]]
+  value_tenant(tenant, "production")
   
 }
 
