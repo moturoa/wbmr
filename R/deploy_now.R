@@ -68,9 +68,6 @@ deploy_now <- function(tenant,
       return(invisible(NULL))
     }
     
-    if(is.null(appid) & appid_from_tenant_list){
-      appid <- appid_tenant(tenant)
-    }
   }
   
   
@@ -83,7 +80,7 @@ deploy_now <- function(tenant,
     stop(paste("Connect a user to", where, "using the Rstudio Posit Connect button"))
   }
   
-  cli::cli_alert_success("Posit connect user verified")
+  cli::cli_alert_success(glue::glue("Posit connect user verified: {posit_user}"))
   
   # Files
   directories <- c(
@@ -146,18 +143,42 @@ deploy_now <- function(tenant,
     }
   }
   
+  # find the app id in the config
+  if(is.null(appid) & appid_from_tenant_list){
+    if(where == "devapp.shintolabs.net"){
+      appid <- value_tenant(tenant, "devappid")
+    } else if(where == "app.shintolabs.net"){
+      appid <- appid_tenant(tenant)
+    } else {
+      appid <- NULL
+    }
+    
+  }
+  
+  if(!is.null(appid)){
+    resp <- rsconnect::deployApp(
+      appDir = deploy_location,
+      appId = appid,
+      account = posit_user,
+      server = where,
+      launch.browser = launch_browser,
+     
+      ...
+    )  
+  } else {
+    resp <- rsconnect::deployApp(
+      appDir = deploy_location,
+      appName = appname,
+      appTitle = appname,
+      account = posit_user,
+      server = where,
+      launch.browser = launch_browser,
+      forceUpdate = TRUE,
+      ...
+    )
+  }
   # Deploy de app
-  resp <- rsconnect::deployApp(
-    appDir = deploy_location,
-    appName = appname,
-    appTitle = appname,
-    appId = appid,
-    account = posit_user,
-    server = where,
-    launch.browser = launch_browser,
-    forceUpdate = TRUE,
-    ...
-  )
+  
   
   if(isTRUE(resp) && log_deployment){
     
