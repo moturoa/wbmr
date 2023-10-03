@@ -23,6 +23,8 @@ get_tenant()
 }
 \arguments{
 \item{tenant}{Tenant (e.g. 'DEMO')}
+
+\item{path}{Path where to update the this_version.yml file}
 }
 \description{
 Corresponds to the application name on rsconnect

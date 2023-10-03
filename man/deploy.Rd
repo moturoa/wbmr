@@ -13,6 +13,8 @@ deploy_test_project(...)
 \item{tenant}{Tenant (e.g. 'DEMO')}
 
 \item{test}{If TRUE, adds a "_test" to the app name}
+
+\item{...}{Further arguments to deploy_project}
 }
 \description{
 Make a 'deploy project' for the WBM

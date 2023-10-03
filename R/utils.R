@@ -31,7 +31,7 @@ get_current_db_name <- function(){
 #' Set current tenant in this_version.yml
 #' @description Overwrites current this_version.yml!
 #' @param tenant Tenant (e.g. 'DEMO')
-#' @param 
+#' @param path Path where to update the this_version.yml file
 #' @export
 #' @rdname utils
 set_tenant <- function(tenant, path = getwd()){
@@ -67,6 +67,7 @@ get_tenant <- function(){
 }
 
 #' Get available tenants for the WBM
+#' @param path Path where to read the tenant_list (normally this working directory)
 #' @export
 get_tenant_choices <- function(path = getwd()){
   tl <- yaml::read_yaml("tenant_list.yml")

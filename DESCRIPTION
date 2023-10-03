@@ -8,6 +8,6 @@ Description: System tools for the WBM, for managing deployments and configuratio
 License: GPL-2
 Depends: shiny, miniUI
 Imports: rstudioapi, shintoshiny, yaml, shintodb, cli, uuid, rsconnect, R.utils, DBI,
-  dplyr, config, glue
+  config, glue
 Encoding: UTF-8
 RoxygenNote: 7.2.3

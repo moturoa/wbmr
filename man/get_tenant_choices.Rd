@@ -6,6 +6,9 @@
 \usage{
 get_tenant_choices(path = getwd())
 }
+\arguments{
+\item{path}{Path where to read the tenant_list (normally this working directory)}
+}
 \description{
 Get available tenants for the WBM
 }
