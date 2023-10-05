@@ -146,7 +146,7 @@ deploy_now <- function(tenant,
   # find the app id in the config
   if(is.null(appid) & appid_from_tenant_list){
     if(where == "devapp.shintolabs.net"){
-      appid <- value_tenant(tenant, "devappid")
+      appid <- value_tenant(tenant, "devappid")[[1]]
     } else if(where == "app.shintolabs.net"){
       appid <- appid_tenant(tenant)
     } else {
