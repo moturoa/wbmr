@@ -34,7 +34,7 @@ deploy_now <- function(tenant,
                        db_config_file = "conf/config.yml",
                        log_deployment = TRUE,
                        launch_browser = FALSE,
-                       deploy_location = tempdir(),
+                       deploy_location = NULL,
                        delete_after_deploy = TRUE,
                        ...
 ){
@@ -46,11 +46,20 @@ deploy_now <- function(tenant,
   # !!! could be in a config or whatever ;)
   is_production <- where %in% c("app.shintolabs.net","eindhoven.shintolabs.net")
   
+  # where to copy the files
+  if(is.null(deploy_location)){
+    
+    deploy_location <- file.path(tempdir(), "juno")
+    unlink(deploy_location, recursive = TRUE, force = TRUE)
+    dir.create(deploy_location)
+    
+  }
+  
   # check if we have a DB connection
   where_con <- ifelse(is_production, "production", "development")
   have_db <- shintodb::has_config_entry(tenant, where_con)
   if(!have_db){
-    cli::cli_alert_danger(glue::glue("Stop deployment - no database connection found in config for {tenant} in section {where_con}"))
+    cli::cli_alert_danger(glue::glue("Stop Juno deployment - no database connection found in config for {tenant} in section {where_con}"))
     return(invisible(NULL))
   }
   
@@ -69,7 +78,6 @@ deploy_now <- function(tenant,
     }
     
   }
-  
   
   
   # posit connect account / user

@@ -13,7 +13,7 @@ deploy_now(
   db_config_file = "conf/config.yml",
   log_deployment = TRUE,
   launch_browser = FALSE,
-  deploy_location = tempdir(),
+  deploy_location = NULL,
   delete_after_deploy = TRUE,
   ...
 )
