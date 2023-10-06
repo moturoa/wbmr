@@ -216,7 +216,7 @@ deploy_now <- function(tenant,
   }
   
   if(delete_after_deploy){
-    unlink(deploy_location)  
+    unlink(deploy_location, recursive = TRUE, force = TRUE)  
     cli::cli_alert_info("Deploy files have been deleted")
   }
   
