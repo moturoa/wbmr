@@ -6,18 +6,8 @@
 #' @param servers 
 #' @export
 deploy_all <- function(tenants, 
-                       where = "development",
-                       servers = c(development = "devapp.shintolabs.net", 
-                                   production = "app.shintolabs.net",
-                                   eindhoven_premium = "eindhoven.shintolabs.net")  
+                       where = "development"
 ){
-  
-  
-  if(!where %in% names(servers)){
-    stop("'where' should refer to a server in servers argument")
-  }
-  
-  server_where <- servers[match(where, names(servers))]
   
   prepare_db_config(tenants, where = where)
   
@@ -26,7 +16,7 @@ deploy_all <- function(tenants,
   for(tenant in tenants){
     cli::cli_h1("Deploying {tenant}")
     tm <- try({
-      deploy_now(tenant, where = server_where)  
+      deploy_now(tenant, where = where)  
     })
     if(inherits(tm, "try-error")){
       cli::cli_alert_danger("Deploy for {tenant} not successful!")

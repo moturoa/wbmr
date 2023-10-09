@@ -28,7 +28,7 @@
 #' @importFrom shintodb has_config_entry
 deploy_now <- function(tenant,
                        appname = NULL,
-                       where = c("devapp.shintolabs.net","app.shintolabs.net","eindhoven.shintolabs.net"),
+                       where = "development",
                        appid = NULL,
                        appid_from_tenant_list = TRUE,
                        db_config_file = "conf/config.yml",
@@ -39,14 +39,12 @@ deploy_now <- function(tenant,
                        ...
 ){
   
-  where <- match.arg(where)
- 
+  
+  posit_server <- get_server(where)
+  
   cli::cli_alert_info(glue::glue("Deploying Juno for tenant {tenant} to {where} ({format(Sys.time())})"))
   
-  # !!! could be in a config or whatever ;)
-  is_production <- where %in% c("app.shintolabs.net","eindhoven.shintolabs.net")
-  
-  # where to copy the files
+  # where to copy the files, locally
   if(is.null(deploy_location)){
     
     deploy_location <- file.path(tempdir(), "juno")
@@ -56,10 +54,9 @@ deploy_now <- function(tenant,
   }
   
   # check if we have a DB connection
-  where_con <- ifelse(is_production, "production", "development")
-  have_db <- shintodb::has_config_entry(tenant, where_con)
+  have_db <- shintodb::has_config_entry(tenant, where)
   if(!have_db){
-    cli::cli_alert_danger(glue::glue("Stop Juno deployment - no database connection found in config for {tenant} in section {where_con}"))
+    cli::cli_alert_danger(glue::glue("Stop Juno deployment - no database connection found in config for {tenant} in section {where}"))
     return(invisible(NULL))
   }
   
@@ -69,11 +66,11 @@ deploy_now <- function(tenant,
   }
   
   # production deployment
-  if(is_production){
+  if(where %in% c("production", "eindhoven_premium")){
     
     check_prod <- has_production_tenant(tenant)
     if(!check_prod){
-      cli::cli_alert_warning(glue::glue("Tenant {tenant} not deployed to production server - set 'production: yes' in tenant_list.yml"))
+      cli::cli_alert_warning(glue::glue("Tenant {tenant} not deployed to production/premium server - set 'production: yes' in tenant_list.yml"))
       return(invisible(NULL))
     }
     
@@ -83,9 +80,9 @@ deploy_now <- function(tenant,
   # posit connect account / user
   acc <- rsconnect::accounts()
   
-  posit_user <- acc$name[acc$server == where]
+  posit_user <- acc$name[acc$server == posit_server]
   if(length(posit_user) == 0){
-    stop(paste("Connect a user to", where, "using the Rstudio Posit Connect button"))
+    stop(paste("Connect a user to", posit_server, "using the Rstudio Posit Connect button"))
   }
   
   cli::cli_alert_success(glue::glue("Posit connect user verified: {posit_user}"))
@@ -153,9 +150,9 @@ deploy_now <- function(tenant,
   
   # find the app id in the config
   if(is.null(appid) & appid_from_tenant_list){
-    if(where == "devapp.shintolabs.net"){
+    if(where == "development"){
       appid <- value_tenant(tenant, "devappid")[[1]]
-    } else if(where == "app.shintolabs.net"){
+    } else if(where == "production"){
       appid <- appid_tenant(tenant)[[1]]
     } else {
       appid <- NULL
@@ -168,9 +165,8 @@ deploy_now <- function(tenant,
       appDir = deploy_location,
       appId = appid,
       account = posit_user,
-      server = where,
+      server = posit_server,
       launch.browser = launch_browser,
-     
       ...
     )  
   } else {
@@ -179,7 +175,7 @@ deploy_now <- function(tenant,
       appName = appname,
       appTitle = appname,
       account = posit_user,
-      server = where,
+      server = posit_server,
       launch.browser = launch_browser,
       forceUpdate = TRUE,
       ...
@@ -208,7 +204,7 @@ deploy_now <- function(tenant,
                                              environment = where,
                                              userid = posit_user,
                                              shintoconnect_manifest = manif,
-                                             version = shintoshiny::get_application_version()
+                                             version =  wbmr::read_version()
                                              )
       
     }

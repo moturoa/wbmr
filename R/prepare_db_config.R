@@ -4,17 +4,12 @@
 #' Also adds required database connections (data_bag, etc.), and prompts for API keys (TinyMCE, etc.)
 #' @param tenants List of tenant names, or wbmr::get_tenant_choices()
 #' @param where Server to deploy to, must correspond to a name in the 'servers' argument
-#' @param servers List of servers; the name will be the name in the config section (this name corresponds to the R_CONFIG_ACTIVE environment variable on the posit connect server)'
 #' @param db_connections_required List of database connections needed. The name is the entry in the config file, each has a list with 'dbname' and 'dbuser'
 #' @importFrom rstudioapi askForPassword
 #' @importFrom shintodb add_config_entry
 #' @export 
 prepare_db_config <- function(tenants = NULL, where = "development",
-                              servers = c(
-                                development = "devapp.shintolabs.net",
-                                production = "app.shintolabs.net",
-                                eindhoven_premium = "eindhoven.shintolabs.net"
-                              ),
+                              
                               db_connections_required = list(data_bag = list(dbname = "data_bag", dbuser = "nlextract"), 
                                                               data_cbs = list(dbname = "data_cbs", dbuser = "data_cbs"),
                                                               data_brk = list(dbname = "data_brk", dbuser = "nlextract"),
@@ -37,11 +32,10 @@ prepare_db_config <- function(tenants = NULL, where = "development",
     tenants <- intersect(tenants, tenant_choices) 
   }
   
-  posit_server <- servers[match(where, names(servers))]
+  posit_server <- get_server(where)
   
-  if(!where %in% names(servers)){
-    cli::cli_alert_danger("'where' argument must be configured in servers argument list")
-    return(NULL)
+  if(is.null(posit_server)){
+    stop("Something went wrong with setting the server")
   }
   
   # in Juno, the config section is the same as the names of the servers in this list

@@ -7,7 +7,7 @@
 deploy_now(
   tenant,
   appname = NULL,
-  where = c("devapp.shintolabs.net", "app.shintolabs.net", "eindhoven.shintolabs.net"),
+  where = "development",
   appid = NULL,
   appid_from_tenant_list = TRUE,
   db_config_file = "conf/config.yml",

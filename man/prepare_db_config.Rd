@@ -7,8 +7,6 @@
 prepare_db_config(
   tenants = NULL,
   where = "development",
-  servers = c(development = "devapp.shintolabs.net", production = "app.shintolabs.net",
-    eindhoven_premium = "eindhoven.shintolabs.net"),
   db_connections_required = list(data_bag = list(dbname = "data_bag", dbuser =
     "nlextract"), data_cbs = list(dbname = "data_cbs", dbuser = "data_cbs"), data_brk =
     list(dbname = "data_brk", dbuser = "nlextract"), shintousers = list(dbname =
@@ -20,8 +18,6 @@ prepare_db_config(
 \item{tenants}{List of tenant names, or wbmr::get_tenant_choices()}
 
 \item{where}{Server to deploy to, must correspond to a name in the 'servers' argument}
-
-\item{servers}{List of servers; the name will be the name in the config section (this name corresponds to the R_CONFIG_ACTIVE environment variable on the posit connect server)'}
 
 \item{db_connections_required}{List of database connections needed. The name is the entry in the config file, each has a list with 'dbname' and 'dbuser'}
 }

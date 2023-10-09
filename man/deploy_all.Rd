@@ -4,12 +4,7 @@
 \alias{deploy_all}
 \title{Vectorized and safe version of deploy_now}
 \usage{
-deploy_all(
-  tenants,
-  where = "development",
-  servers = c(development = "devapp.shintolabs.net", production = "app.shintolabs.net",
-    eindhoven_premium = "eindhoven.shintolabs.net")
-)
+deploy_all(tenants, where = "development")
 }
 \arguments{
 \item{tenants}{vector of tenants to deploy}
