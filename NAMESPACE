@@ -2,6 +2,7 @@
 
 export(appid_tenant)
 export(appname_tenant)
+export(deploy_all)
 export(deploy_now)
 export(deploy_project)
 export(deploy_test_project)
