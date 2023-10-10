@@ -1,4 +1,6 @@
 
+#' Read a field from tenant_list for a tenant
+#' @export
 value_tenant <- function(tenant, column){
   key <- yaml::read_yaml("tenant_list.yml")
   

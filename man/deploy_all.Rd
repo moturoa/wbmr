@@ -4,15 +4,27 @@
 \alias{deploy_all}
 \title{Vectorized and safe version of deploy_now}
 \usage{
-deploy_all(tenants, where = "development")
+deploy_all(
+  tenants = NULL,
+  where = "development",
+  skip_tenants = NULL,
+  confirm = TRUE,
+  ...
+)
 }
 \arguments{
-\item{tenants}{vector of tenants to deploy}
+\item{tenants}{vector of tenants to deploy (if missing, will deploy everything!)}
 
 \item{where}{Refers to config section (development/production/)}
 
-\item{servers}{}
+\item{skip_tenants}{Remove these tenants from the deploy list (for whatever reason)}
+
+\item{confirm}{If no tenants argument given, prompt to continue unless confirm = FALSE}
+
+\item{...}{Further arguments to [deploy_now()], for example `test=TRUE`}
 }
 \description{
-Also checks the db config file and prompts for missing passwords
+If no 'tenants' argument given, will deploy all tenants in the tenant list. If where='production', 
+only deploys those tenants with production: yes in the tenant list. Also cecks the db config file and prompts for missing passwords,
+to avoid deploying a tenant without a database configuration.
 }

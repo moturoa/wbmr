@@ -10,6 +10,7 @@ deploy_now(
   where = "development",
   appid = NULL,
   appid_from_tenant_list = TRUE,
+  test = FALSE,
   db_config_file = "conf/config.yml",
   log_deployment = TRUE,
   launch_browser = FALSE,
@@ -30,6 +31,8 @@ are a collaborator on an app and want to update it (the original uploader does n
 
 \item{appid_from_tenant_list}{If TRUE (the default) and appid is NULL (also default), reads appid from the tenant
 list if the deployment is to the production environment}
+
+\item{test}{If TRUE, deploys to appname with suffix "_test", ignores appid}
 
 \item{db_config_file}{Standard location of the DB config file}
 

@@ -9,6 +9,7 @@
 #' are a collaborator on an app and want to update it (the original uploader does not need the ID)
 #' @param appid_from_tenant_list If TRUE (the default) and appid is NULL (also default), reads appid from the tenant
 #' list if the deployment is to the production environment
+#' @param test If TRUE, deploys to appname with suffix "_test", ignores appid
 #' @param db_config_file Standard location of the DB config file
 #' @param log_deployment If TRUE, attempts to log the deployment in DB 
 #' @param launch_browser If TRUE, opens a browser with the app after deployment
@@ -31,6 +32,7 @@ deploy_now <- function(tenant,
                        where = "development",
                        appid = NULL,
                        appid_from_tenant_list = TRUE,
+                       test = FALSE,
                        db_config_file = "conf/config.yml",
                        log_deployment = TRUE,
                        launch_browser = FALSE,
@@ -42,6 +44,9 @@ deploy_now <- function(tenant,
   
   posit_server <- get_server(where)
   
+  if(test){
+    cli::cli_alert_info("This is a TEST deployment (appname ends in _test)")
+  }
   cli::cli_alert_info(glue::glue("Deploying Juno for tenant {tenant} to {where} ({format(Sys.time())})"))
   
   # where to copy the files, locally
@@ -66,7 +71,7 @@ deploy_now <- function(tenant,
   }
   
   # production deployment
-  if(where %in% c("production", "eindhoven_premium")){
+  if(where == "production"){
     
     check_prod <- has_production_tenant(tenant)
     if(!check_prod){
@@ -82,7 +87,7 @@ deploy_now <- function(tenant,
   
   posit_user <- acc$name[acc$server == posit_server]
   if(length(posit_user) == 0){
-    stop(paste("Connect a user to", posit_server, "using the Rstudio Posit Connect button"))
+    stop(glue::glue("Connect a user to {posit_server} using the Rstudio Posit Connect button"))
   }
   
   cli::cli_alert_success(glue::glue("Posit connect user verified: {posit_user}"))
@@ -149,15 +154,22 @@ deploy_now <- function(tenant,
   }
   
   # find the app id in the config
-  if(is.null(appid) & appid_from_tenant_list){
+  if(!test && (is.null(appid) & appid_from_tenant_list)){
     if(where == "development"){
       appid <- value_tenant(tenant, "devappid")[[1]]
     } else if(where == "production"){
       appid <- appid_tenant(tenant)[[1]]
+    } else if(where == "eindhoven_premium"){
+      appid <- value_tenant(tenant, "eindhovenid")[[1]]
     } else {
       appid <- NULL
     }
     
+  }
+  
+  if(test){
+    appname <- paste0(appname, "_test")
+    log_deployment <- FALSE
   }
   
   if(!is.null(appid)){
