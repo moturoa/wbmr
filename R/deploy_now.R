@@ -23,8 +23,8 @@
 #' @importFrom uuid UUIDgenerate
 #' @importFrom yaml write_yaml
 #' @importFrom shintodb decrypt_config_file has_config_entry
-#' @importFrom shintoshiny log_rsconnect_deployments connect_db_rsconnect_deployments
 #' @importFrom DBI dbDisconnect
+#' @importFrom shintoshiny read_git_version make_deploy_project read_application_info
 #' @export
 #' @importFrom shintodb has_config_entry
 deploy_now <- function(tenant,
@@ -41,6 +41,9 @@ deploy_now <- function(tenant,
                        ...
 ){
   
+  if(length(tenant) > 1){
+    stop("Use wbmr::deploy_all() to deploy more than one tenant at a time")
+  }
   
   posit_server <- get_server(where)
   
@@ -96,6 +99,7 @@ deploy_now <- function(tenant,
   directories <- c(
     "conf",
     file.path("config_site", tenant),
+    file.path("data_public", tenant),
     "modules",
     "preload",
     "R",
@@ -193,30 +197,37 @@ deploy_now <- function(tenant,
       ...
     )
   }
+  
   # Deploy de app
   if(isTRUE(resp) && log_deployment){
     
     if(!shintodb::has_config_entry("rsconnect_deployments", where = "default")){
       
-      cli::cli_alert_warning("No DB connection config found for 'rsconnect_deployments', deployment will not be logged.")
+      cli::cli_alert_warning("No DB connection config found for 'rsconnect_deployments', deployment will not be logged. Add it to default+development only.")
       
     } else {
       
-      # Schrijf deployment info naar rsconnect_deployments database
-      con <- shintoshiny::connect_db_rsconnect_deployments(db_config_file)
+      log_tab <- data.frame(
+        timestamp = format(Sys.time()),
+        environment = unname(posit_server),
+        appname = appname,
+        userid = posit_user,
+        git_sha = manif$git$sha,
+        git_branch = manif$git$branch,
+        git_remote = manif$git$remote,
+        version = wbmr::read_version(),
+        tenant = tenant
+      )
+      
+      con <- shintodb::connect("rsconnect_deployments")
       
       on.exit({
         DBI::dbDisconnect(con)
       })
       
-      shintoshiny::log_rsconnect_deployments(con,
-                                             appname = appname,
-                                             environment = posit_server,
-                                             userid = posit_user,
-                                             shintoconnect_manifest = manif,
-                                             version =  wbmr::read_version()
-                                             )
-      
+      DBI::dbWriteTable(con, DBI::Id(schema = "rsconnect", table = "deployments"),
+                        log_tab, append = TRUE)
+
     }
     
   }
