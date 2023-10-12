@@ -99,7 +99,7 @@ deploy_now <- function(tenant,
   directories <- c(
     "conf",
     file.path("config_site", tenant),
-    file.path("data_public", tenant),
+    #file.path("data_public", tenant),
     "modules",
     "preload",
     "R",
