@@ -194,8 +194,6 @@ deploy_now <- function(tenant,
     )
   }
   # Deploy de app
-  
-  
   if(isTRUE(resp) && log_deployment){
     
     if(!shintodb::has_config_entry("rsconnect_deployments", where = "default")){
@@ -213,7 +211,7 @@ deploy_now <- function(tenant,
       
       shintoshiny::log_rsconnect_deployments(con,
                                              appname = appname,
-                                             environment = where,
+                                             environment = posit_server,
                                              userid = posit_user,
                                              shintoconnect_manifest = manif,
                                              version =  wbmr::read_version()
